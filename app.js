@@ -43,7 +43,7 @@
   const community = () => safeUrl(config.communityUrl || config.community_url || '');
   const help = () => safeUrl(config.helpUrl || config.help_url || '');
   const timeConfirmed = () => (event.timeStatus || config.time_status) === 'confirmed';
-  const dateText = () => event.dateLabel || config.dateLabel || '2026 නොවැම්බර් 14';
+  const dateText = () => window.WorkshopI18n?.getLanguage() === 'en' ? new Date(`${event.date || '2026-11-14'}T12:00:00+05:30`).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Colombo'}) : event.dateLabel || config.dateLabel || '2026 නොවැම්බර් 14';
   const timeText = () => timeConfirmed() ? (event.timeLabel || config.timeLabel || 'තහවුරු කළ වේලාව ලබාදී නැත') : 'වේලාව WhatsApp ප්‍රජාවේ ඡන්ද විමසීමෙන් පසු තහවුරු කෙරේ.';
   function analytics(name, data = {}, once = true) {
     const key = `${name}:${data.step || ''}:${name === 'registration_start' ? 'session' : state.registration_id || 'open'}`;
@@ -98,7 +98,7 @@
   function setPending(value) {
     for (const id of ['quiz-content-area', 'quiz-nav']) $(id)?.querySelectorAll('button,input,select,textarea').forEach(el => el.disabled = value);
     $('quiz-content-area')?.setAttribute('aria-busy', String(value));
-    const status = $('flow-status'); if (status) status.textContent = value ? (state.screen === 'question' && state.step === 3 ? 'ඔබේ ලියාපදිංචිය සම්පූර්ණයි. EN Your chosen focus: [selected challenge]. The workshop covers the five advertised topics; your answer helps us understand your needs. SI ඔබ තෝරාගත් අවධානය: [තෝරාගත් අභියෝගය]. වැඩමුළුවේ සඳහන් මාතෘකා පහ සාකච්ඡා කෙරේ. ඔබේ පිළිතුර ඔබේ අවශ්‍යතා හඳුනාගැනීමට අපට උපකාරී වේ. EN Watch this short message for your situation, or read the text below. SI ඔබේ තත්ත්වයට අදාළ මෙම කෙටි වීඩියෝව නරඹන්න. නැතිනම් පහත පෙළ කියවන්න. Always visible primary action EN Join WhatsApp and vote for the time SI WhatsApp ප්‍රජාවට එක්වී පහසු වේලාවට ඡන්දය දෙන්න EN Registration is complete. Community joining is a separate step. You do not need to watch the video before joining. SI ලියාපදිංචිය සම්පූර්ණයි. WhatsApp ප්‍රජාවට එක්වීම වෙනම පියවරකි. එයට එක්වීමට පෙර වීඩියෝව නැරඹීම අනිවාර්ය නැත. EN Already in the community? Open it and check the pinned time poll. SI දැනටමත් ප්‍රජාවේ සිටිනවාද? එය විවෘත කර ඉහළින් රඳවා ඇති වේලාව පිළිබඳ ඡන්ද විමසීම බලන්න. Quiz & Video Set | 18 === PAGE 19 === SU COLLECTION / UVA VEC • REGISTRATION EXPERIENCE 18 Optional requests and enquiry route Optional product information after the join invitation EN Would you like any additional information? This is optional and does not affect workshop access. SI ඔබට අමතර තොරතුරු අවශ්‍යද? මෙය අත්‍යවශ්‍ය නොවන අතර වැඩමුළුවට සහභාගී වීමට බලපාන්නේ නැත. EN Please send me the approved e-book details. SI කරුණාකර ඊ-පොතේ අන්තර්ගතය සහ මිලදී ගැනීමේ තොරතුරු මට එවන්න. EN Please contact me about mentorship options. SI පුද්ගලික ව්‍යාපාර මඟපෙන්වීමේ වැඩසටහන පිළිබඳ තොරතුරු ලබාදීමට කරුණාකර මා අමතන්න. EN No product information for now. SI දැනට නිෂ්පාදන පිළිබඳ තොරතුරු අවශ්‍ය නැහැ. EN Save my preferences. This does not purchase or enrol you in anything. SI මගේ කැමැත්ත සුරකින්න. මෙය කිසිවක් මිලදී ගැනීමක් හෝ ගාස්තු අය කරන වැඩසටහනකට ඇතුළත් වීමක් නොවේ. Separate custom or product enquiry EN Tell us what you would like to ask about. SI ඔබ විමසීමට කැමති දේ කෙටියෙන් සඳහන් කරන්න. EN Use my details to respond to this enquiry. SI මෙම විමසීමට පිළිතුරු ලබාදීම සඳහා මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි. EN Send my enquiry SI මගේ විමසීම යවන්න EN Your enquiry has been received. The team will respond through the contact details you provided. This is not a confirmed order or workshop registration. SI ඔබේ විමසීම ලැබී ඇත. ඔබ ලබාදුන් සම්බන්ධතා තොරතුරු හරහා කණ්ඩායම පිළිතුරු ලබාදෙනු ඇත. මෙය තහවුරු කළ ඇණවුමක් හෝ වැඩමුළු ලියාපදිංචියක් නොවේ. Attendance question only after time confirmation EN The workshop is on 14 November at [confirmed time, Sri Lanka]. Do you plan to join live? Yes / Not sure / Cannot attend live. SI වැඩමුළුව නොවැම්බර් 14 වන දින [තහවුරු කළ වේලාව, ශ්‍රීලංකා වේලාවෙන්] පැවැත්වේ. ඔබ සජීවීව සහභාගී වීමට සැලසුම් කරනවාද? ඔව් / තවම තීරණය කර නැහැ / සජීවීව සහභාගී විය නොහැකියි. Quiz & Video Set | 19 === PAGE 20 === SU COLLECTION / UVA VEC • REGISTRATION EXPERIENCE 19 Buttons validation and recovery copy EN Back SI ආපසු EN Continue SI ඉදිරියට EN Read text instead SI වීඩියෝව වෙනුවට පෙළ කියවන්න EN Saving your details… SI ඔබේ තොරතුරු සුරකිමින් පවතී…' : 'ඔබේ තොරතුරු සුරකිමින් පවතී…') : '';
+    const status = $('flow-status'); if (status) status.textContent = value ? (state.screen === 'question' && state.step === 3 ? 'ඔබේ ලියාපදිංචිය සම්පූර්ණ කරමින් පවතී…' : 'ඔබේ තොරතුරු සුරකිමින් පවතී…') : '';
   }
   function captureDetails() {
     for (const key of ['name', 'phone', 'email', 'dial']) if ($(`flow-${key}`)) state.details[key] = $(`flow-${key}`).value;
@@ -206,7 +206,7 @@
     $('quiz-nav').innerHTML = actionsView();
     const nextKey = `${state.screen}:${state.step}`;
     if (nextKey !== renderedKey) { $('quiz-main-panel').scrollTop = 0; renderedKey = nextKey; }
-    bind(); setPending(state.pending);
+    bind(); setPending(state.pending); window.WorkshopI18n?.apply();
     if (state.error) $('flow-errors').focus?.();
     else (state.screen === 'details' && container.querySelector('.pill-field input, .flow-check input') || container.querySelector('.quiz-q-title'))?.focus({ preventScroll: true });
   }
@@ -310,10 +310,12 @@
   window.Funnel = { openQuiz, closeQuiz, goPrev:()=>$('flow-back')?.click(), goNext:()=>$('flow-next')?.click() };
   function dates() {
     const date=new Date(`${event.date || '2026-11-14'}T12:00:00+05:30`);
-    const month=new Intl.DateTimeFormat('si-LK',{month:'long',timeZone:'Asia/Colombo'}).format(date);
+    const english=window.WorkshopI18n?.getLanguage()==='en';
+    const months=english?['January','February','March','April','May','June','July','August','September','October','November','December']:['ජනවාරි','පෙබරවාරි','මාර්තු','අප්‍රේල්','මැයි','ජූනි','ජූලි','අගෝස්තු','සැප්තැම්බර්','ඔක්තෝබර්','නොවැම්බර්','දෙසැම්බර්'];
+    const month=months[date.getUTCMonth()];
     for(const prefix of ['home','modal']) { if($(`${prefix}-event-month`)) $(`${prefix}-event-month`).textContent=month; if($(`${prefix}-event-day`)) $(`${prefix}-event-day`).textContent=String(date.getUTCDate()); if($(`${prefix}-event-time`)) $(`${prefix}-event-time`).textContent=timeText(); }
-    const days=['ඉරිදා','සඳුදා','අඟහරුවාදා','බදාදා','බ්‍රහස්පතින්දා','සිකුරාදා','සෙනසුරාදා'], short=['ඉරි','සඳු','අඟ','බදා','බ්‍රහ','සිකු','සෙන'];
-    const shortMonth=new Intl.DateTimeFormat('en-GB',{month:'short',timeZone:'Asia/Colombo'}).format(date);
+    const days=english?['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']:['ඉරිදා','සඳුදා','අඟහරුවාදා','බදාදා','බ්‍රහස්පතින්දා','සිකුරාදා','සෙනසුරාදා'], short=english?['Sun','Mon','Tue','Wed','Thu','Fri','Sat']:['ඉරි','සඳු','අඟ','බදා','බ්‍රහ','සිකු','සෙන'];
+    const shortMonth=english?months[date.getUTCMonth()].slice(0,3):month;
     for(const prefix of ['home','modal']) { if($(`${prefix}-event-year`)) $(`${prefix}-event-year`).textContent=String(date.getUTCFullYear()); if($(`${prefix}-event-weekday`)) $(`${prefix}-event-weekday`).textContent=days[date.getUTCDay()]; }
     if($('modal-event-month-short')) $('modal-event-month-short').textContent=shortMonth;
     if($('home-event-time') && !timeConfirmed()) $('home-event-time').textContent=`${timeText()} ඔබට පහසු වේලාව සඳහා ඡන්දය දීමට ලියාපදිංචි වී ප්‍රජාවට එක්වන්න.`;
@@ -321,8 +323,10 @@
     const week=document.querySelector('.date-week'), monday=new Date(date); monday.setUTCDate(date.getUTCDate()-(date.getUTCDay()+6)%7);
     if(week) week.innerHTML=Array.from({length:7},(_,i)=>{ const d=new Date(monday); d.setUTCDate(monday.getUTCDate()+i); return `<li${i===(date.getUTCDay()+6)%7?' class="is-event"':''}><span>${short[d.getUTCDay()]}</span>${d.getUTCDate()}</li>`; }).join('');
   }
+  window.addEventListener('workshop:languagechange',dates);
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',dates); else dates();
   // Legacy headline font: show the converted string only once the font is available.
   const legacy=document.querySelectorAll('[data-legacy]');
-  if(legacy.length && document.fonts) document.fonts.load('1em "Tharu Digital Mahee"').then(faces=>{ if(!faces.length) return; legacy.forEach(el=>{ const text=el.innerHTML; el.innerHTML=`<span class="sr-only">${text}</span><span class="legacy-si" aria-hidden="true"></span>`; el.lastChild.textContent=el.dataset.legacy; el.classList.add('has-legacy'); }); }).catch(()=>{});
+  const legacySources=new Map([...legacy].map(el=>[el,el.innerHTML]));
+  if(legacy.length && document.fonts) document.fonts.load('1em "Tharu Digital Mahee"').then(faces=>{ if(!faces.length) return; legacy.forEach(el=>{ const text=legacySources.get(el); el.innerHTML=`<span class="sr-only">${text}</span><span class="legacy-si" aria-hidden="true"></span>`; el.lastChild.textContent=el.dataset.legacy; el.classList.add('has-legacy'); }); }).catch(()=>{});
 })();

@@ -155,7 +155,7 @@ a { color: inherit; }
 .date-week li.is-event::after { content: ''; width: 5px; height: 5px; margin-top: 3px; border-radius: 50%; background: var(--coral); }
 .date-main { display: flex; align-items: flex-end; gap: 14px; }
 .date-overline { display: block; font-size: 11px; color: #3d6878; margin-bottom: 6px; }
-.hero-date .date-day { display: block; font: 300 112px/.95 'Inter',sans-serif; letter-spacing: -.065em; color: #f4fdff; text-shadow: 0 4px 18px #2f5f7238; }
+.hero-date .date-day { display: block; font: 300 112px/.95 'Inter',sans-serif; letter-spacing: -.065em; color: #315f70; text-shadow: 0 4px 18px #2f5f7238; }
 .date-month { margin: 0 0 14px; font-size: 13px; line-height: 1.5; color: #2f5f72; }
 .date-month span { display: block; font-size: 19px; }
 .date-month b { font-weight: inherit; }
@@ -318,3 +318,17 @@ a { color: inherit; }
 /* Short screens: tighter spacing so a whole question fits */
 @media(max-height: 800px) { .quiz-header-bar { padding-top: 14px; } .quiz-progress { padding-top: 10px; } .quiz-question { padding-top: 14px; padding-bottom: 16px; } .flow-saved { margin-bottom: 2px; } .quiz-q-title { font-size: 19px; line-height: 1.5; } .flow-note { margin-bottom: 10px; } .quiz-choices { gap: 7px; } .quiz-choice { min-height: 50px; padding-top: 5px; padding-bottom: 5px; font-size: 14.5px; line-height: 1.6; } .quiz-choice-key { width: 38px; height: 38px; } .quiz-footer { padding-top: 10px; padding-bottom: 12px; } }
 @media(max-height: 500px) { .quiz-overlay { padding: 6px; } .quiz-shell-wide { max-height: calc(100dvh - 12px); } }
+
+/* Shared language controls, Sinhala remains the initial language. */
+.language-toggle { flex-shrink:0; border:1px solid #ffffffa6; border-radius:99px; background:#ffffff73; color:#315f70; padding:8px 13px; font:500 12px/1.5 'Inter','Noto Sans Sinhala',sans-serif; cursor:pointer; white-space:nowrap; }
+.language-toggle:hover { background:#ffffffb0; }
+.language-toggle:focus-visible { outline:3px solid #3b7e96; outline-offset:3px; }
+.quiz-header-bar .language-toggle { margin-left:auto; padding:6px 11px; font-size:11px; color:var(--q-ink,#584953); }
+html[lang=en] .hero-copy h1 { font-family:'Inter',sans-serif; font-size:clamp(29px,2.8vw,43px); line-height:1.18; letter-spacing:-.035em; }
+html[lang=en] .hero-sinhala { line-height:1.75; }
+html[lang=en] .quiz-q-title { line-height:1.35; }
+@media(max-width:760px) { .site-header { gap:8px; padding-inline:10px; }.language-toggle { padding:6px 9px; font-size:10px; }.workshop-badge { font-size:9px; gap:6px; }.header-register { font-size:9px; padding-left:7px; gap:5px; }.header-arrow { width:20px; height:22px; }.partner-logos { right:10px; width:68px; } html[lang=en] .hero-copy h1 { font-size:32px; } }
+html[lang=en] .legacy-si { font-family:var(--font-display,'Inter',sans-serif) !important; letter-spacing:normal; }
+html[lang=en] .mentor-head strong { font-family:'Inter',sans-serif; }
+html[lang=en] .learn-heading h2 { line-height:1.25; }
+@media(min-width:761px) { html[lang=en] .hero-copy h1 { font-size:clamp(29px,2.35vw,35px); } html[lang=en] .hero-steps .hero-note { line-height:1.65; } }
