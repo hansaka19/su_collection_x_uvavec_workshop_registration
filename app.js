@@ -32,7 +32,7 @@
     V4: 'ඔබට ප්‍රධාන වශයෙන් අවශ්‍ය මැහුම් ඉගෙනගැනීමට බව අපි තේරුම් ගත්තා. මේ වැඩමුළුවේ අවධානය යොමුවෙන්නේ නිෂ්පාදන තෝරාගැනීම, රෙදි හොඳින් භාවිත කිරීම, වියදම් ගණනය කිරීම සහ පාරිභෝගිකයන්ට සේවය කිරීම වැනි ව්‍යාපාරික කරුණු වෙතයි. මෙය පියවරෙන් පියවර මැහුම් ක්‍රම උගන්වන පන්තියක් නොවේ. මැහුම් හැකියාව කුඩා ව්‍යාපාරයකට සම්බන්ධ කරගන්නේ කොහොමද කියා දැනගන්න කැමති නම් ඔබට සහභාගී වෙන්න පුළුවන්. ඔබේ ලියාපදිංචිය සම්පූර්ණයි. WhatsApp ප්‍රජාවට එක්වී ඔබට පහසු වේලාවට ඡන්දය දෙන්න.',
     V5: 'ඔබට අවශ්‍ය දේ ගැන තවමත් සොයා බලමින් සිටිනවා නම් ඒක ගැටලුවක් නැහැ. මේ නොමිලේ වැඩමුළුවෙන් කුඩා මැහුම් ව්‍යාපාරයක ප්‍රායෝගික තීරණ ගැන හඳුන්වා දෙනවා. ගාස්තු අය කරන වැඩසටහනකට බැඳෙන්නේ නැතිව ඔබට මේ අදහස් ගැන ඉගෙනගන්න පුළුවන්. ඇඳුමක් මස්සවා ගැනීම හෝ නිෂ්පාදනයක් ගැන විමසීමක් තිබෙනවා නම් එය වෙනම සලකා බලන්න පුළුවන්. ඔබේ වැඩමුළු ලියාපදිංචිය සම්පූර්ණයි. WhatsApp ප්‍රජාවට එක්වී ඔබට පහසු වේලාවට ඡන්දය දෙන්න. සම්බන්ධ වීමේ තොරතුරුත් එහි ලැබෙනවා.'
   };
-  const state = { screen: 'details', step: 0, answers: {}, details: { name: '', phone: '', email: '', dial: '+94', workshop_contact_acknowledgement: false, marketing_opt_in: false }, registration_id: null, session_token: null, custom_attending: null, enquiry_text: '', enquiry_consent: false, requests: [], membership: 'unknown', pending: false, error: '', errors: {}, saved: false, video: null };
+  const state = { screen: 'details', detailStep: 0, step: 0, answers: {}, details: { name: '', phone: '', email: '', dial: '+94', workshop_contact_acknowledgement: false, marketing_opt_in: false }, registration_id: null, session_token: null, custom_attending: null, enquiry_text: '', enquiry_consent: false, requests: [], membership: 'unknown', pending: false, error: '', errors: {}, saved: false, video: null };
   const operations = new Map();
   const emitted = new Set();
   let returnFocus, oldOverflow, opened = false, renderedKey = '';
@@ -85,9 +85,10 @@
     }
     throw last || new Error('SAVE_FAILED');
   }
-  function generalError(error) {
-    return error.message === 'ENDPOINT_NOT_CONFIGURED' ? 'ලියාපදිංචි සේවාව තවම සකසා නැත. ඔබේ තොරතුරු යවා නැත. කරුණාකර පසුව නැවත උත්සාහ කරන්න.' : 'සුරැකීමට නොහැකි විය. ඔබ ඇතුළත් කළ තොරතුරු මෙහි තවමත් ඇත. කරුණාකර නැවත උත්සාහ කරන්න.';
+  function generalError() {
+    return 'ඔබේ පිළිතුරු සුරැකීමට නොහැකි විය. ඔබ ඇතුළත් කළ තොරතුරු මෙහි තවමත් ඇත. කරුණාකර නැවත උත්සාහ කරන්න.';
   }
+
   async function save(work) {
     if (state.pending) return;
     state.pending = true; state.error = ''; setPending(true);
@@ -95,9 +96,9 @@
     finally { state.pending = false; render(); }
   }
   function setPending(value) {
-    $('quiz-content-area')?.querySelectorAll('button,input,select,textarea').forEach(el => el.disabled = value);
+    for (const id of ['quiz-content-area', 'quiz-nav']) $(id)?.querySelectorAll('button,input,select,textarea').forEach(el => el.disabled = value);
     $('quiz-content-area')?.setAttribute('aria-busy', String(value));
-    const status = $('flow-status'); if (status) status.textContent = value ? 'සුරකිමින් පවතී…' : '';
+    const status = $('flow-status'); if (status) status.textContent = value ? (state.screen === 'question' && state.step === 3 ? 'ඔබේ ලියාපදිංචිය සම්පූර්ණයි. EN Your chosen focus: [selected challenge]. The workshop covers the five advertised topics; your answer helps us understand your needs. SI ඔබ තෝරාගත් අවධානය: [තෝරාගත් අභියෝගය]. වැඩමුළුවේ සඳහන් මාතෘකා පහ සාකච්ඡා කෙරේ. ඔබේ පිළිතුර ඔබේ අවශ්‍යතා හඳුනාගැනීමට අපට උපකාරී වේ. EN Watch this short message for your situation, or read the text below. SI ඔබේ තත්ත්වයට අදාළ මෙම කෙටි වීඩියෝව නරඹන්න. නැතිනම් පහත පෙළ කියවන්න. Always visible primary action EN Join WhatsApp and vote for the time SI WhatsApp ප්‍රජාවට එක්වී පහසු වේලාවට ඡන්දය දෙන්න EN Registration is complete. Community joining is a separate step. You do not need to watch the video before joining. SI ලියාපදිංචිය සම්පූර්ණයි. WhatsApp ප්‍රජාවට එක්වීම වෙනම පියවරකි. එයට එක්වීමට පෙර වීඩියෝව නැරඹීම අනිවාර්ය නැත. EN Already in the community? Open it and check the pinned time poll. SI දැනටමත් ප්‍රජාවේ සිටිනවාද? එය විවෘත කර ඉහළින් රඳවා ඇති වේලාව පිළිබඳ ඡන්ද විමසීම බලන්න. Quiz & Video Set | 18 === PAGE 19 === SU COLLECTION / UVA VEC • REGISTRATION EXPERIENCE 18 Optional requests and enquiry route Optional product information after the join invitation EN Would you like any additional information? This is optional and does not affect workshop access. SI ඔබට අමතර තොරතුරු අවශ්‍යද? මෙය අත්‍යවශ්‍ය නොවන අතර වැඩමුළුවට සහභාගී වීමට බලපාන්නේ නැත. EN Please send me the approved e-book details. SI කරුණාකර ඊ-පොතේ අන්තර්ගතය සහ මිලදී ගැනීමේ තොරතුරු මට එවන්න. EN Please contact me about mentorship options. SI පුද්ගලික ව්‍යාපාර මඟපෙන්වීමේ වැඩසටහන පිළිබඳ තොරතුරු ලබාදීමට කරුණාකර මා අමතන්න. EN No product information for now. SI දැනට නිෂ්පාදන පිළිබඳ තොරතුරු අවශ්‍ය නැහැ. EN Save my preferences. This does not purchase or enrol you in anything. SI මගේ කැමැත්ත සුරකින්න. මෙය කිසිවක් මිලදී ගැනීමක් හෝ ගාස්තු අය කරන වැඩසටහනකට ඇතුළත් වීමක් නොවේ. Separate custom or product enquiry EN Tell us what you would like to ask about. SI ඔබ විමසීමට කැමති දේ කෙටියෙන් සඳහන් කරන්න. EN Use my details to respond to this enquiry. SI මෙම විමසීමට පිළිතුරු ලබාදීම සඳහා මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි. EN Send my enquiry SI මගේ විමසීම යවන්න EN Your enquiry has been received. The team will respond through the contact details you provided. This is not a confirmed order or workshop registration. SI ඔබේ විමසීම ලැබී ඇත. ඔබ ලබාදුන් සම්බන්ධතා තොරතුරු හරහා කණ්ඩායම පිළිතුරු ලබාදෙනු ඇත. මෙය තහවුරු කළ ඇණවුමක් හෝ වැඩමුළු ලියාපදිංචියක් නොවේ. Attendance question only after time confirmation EN The workshop is on 14 November at [confirmed time, Sri Lanka]. Do you plan to join live? Yes / Not sure / Cannot attend live. SI වැඩමුළුව නොවැම්බර් 14 වන දින [තහවුරු කළ වේලාව, ශ්‍රීලංකා වේලාවෙන්] පැවැත්වේ. ඔබ සජීවීව සහභාගී වීමට සැලසුම් කරනවාද? ඔව් / තවම තීරණය කර නැහැ / සජීවීව සහභාගී විය නොහැකියි. Quiz & Video Set | 19 === PAGE 20 === SU COLLECTION / UVA VEC • REGISTRATION EXPERIENCE 19 Buttons validation and recovery copy EN Back SI ආපසු EN Continue SI ඉදිරියට EN Read text instead SI වීඩියෝව වෙනුවට පෙළ කියවන්න EN Saving your details… SI ඔබේ තොරතුරු සුරකිමින් පවතී…' : 'ඔබේ තොරතුරු සුරකිමින් පවතී…') : '';
   }
   function captureDetails() {
     for (const key of ['name', 'phone', 'email', 'dial']) if ($(`flow-${key}`)) state.details[key] = $(`flow-${key}`).value;
@@ -110,10 +111,10 @@
   }
   function validateDetails() {
     const d = state.details, errors = {};
-    if (d.name.trim().length < 2 || !/\p{L}/u.test(d.name)) errors.name = 'කරුණාකර ඔබේ සම්පූර්ණ නම ඇතුළත් කරන්න.';
-    if (!/^\+[1-9]\d{7,14}$/.test(normalPhone())) errors.phone = 'කරුණාකර නිවැරදි WhatsApp අංකයක් ඇතුළත් කර රටේ කේතය පරීක්ෂා කරන්න.';
+    if (d.name.trim().length < 2 || !/\p{L}/u.test(d.name)) errors.name = 'කරුණාකර ඔබේ නම ඇතුළත් කරන්න.';
+    if (!/^\+[1-9]\d{7,14}$/.test(normalPhone())) errors.phone = 'කරුණාකර නිවැරදි WhatsApp අංකයක් ඇතුළත් කර රටේ දුරකථන කේතය පරීක්ෂා කරන්න.';
     if (d.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim())) errors.email = 'කරුණාකර නිවැරදි විද්‍යුත් තැපැල් ලිපිනයක් ඇතුළත් කරන්න.';
-    if (!d.workshop_contact_acknowledgement) errors.workshop_contact_acknowledgement = 'ඉදිරියට යාමට වැඩමුළුව පිළිබඳ පණිවිඩ සඳහා එකඟතාව තහවුරු කරන්න.';
+    if (!d.workshop_contact_acknowledgement) errors.workshop_contact_acknowledgement = 'ඉදිරියට යාමට වැඩමුළුව පිළිබඳ පණිවිඩ ලබාගැනීම සඳහා ඇති එකඟතාව තහවුරු කරන්න.';
     state.errors = errors; return Object.keys(errors).length === 0;
   }
   const checked = yes => yes ? ' checked' : '';
@@ -125,71 +126,101 @@
     const classes = secondary ? 'btn-back flow-resource-button' : 'btn btn-primary flow-resource-button';
     return url ? `<a id="${id}" class="${classes}" href="${escape(url)}" target="_blank" rel="noopener">${label}</a>` : `<button id="${id}" class="${classes}" type="button" data-resource="${id}">${label}</button><span class="flow-resource-status" id="${id}-status" role="status" aria-live="polite"></span>`;
   }
-  const routeLabels = { V1: 'ආරම්භයට මඟපෙන්වීමක්', V2: 'මැහුම් හැකියාවෙන් ව්‍යාපාරයකට', V3: 'දැනට කරන ඇණවුම් දියුණු කරගනිමු', V4: 'මැහුම් ඉගෙනීමට කැමති ඔබට', V5: 'ඔබට ගැලපෙන ආරම්භයක් සොයමු' };
+  const icons = {
+    name: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+    phone: '<svg viewBox="0 0 24 24"><path d="M6.6 3.5 9 4.2l1.1 3.9-2 1.6a13 13 0 0 0 6.2 6.2l1.6-2 3.9 1.1.7 2.4c-.3 1.8-1.8 3.1-3.6 3.1C9.9 20.5 3.5 14.1 3.5 7.1c0-1.8 1.3-3.3 3.1-3.6Z"/></svg>',
+    email: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.5 7.1"/></svg>'
+  };
+  const pillIcon = key => `<span class="pill-icon" aria-hidden="true">${icons[key]}</span>`;
+  const choiceKey = i => `<span class="quiz-choice-key" aria-hidden="true">${'ABCDEF'[i]}</span>`;
+  // Basic details are asked one field per screen; the details are saved (status=started) after the last one.
+  const detailKeys = [['name'], ['phone'], ['email'], ['workshop_contact_acknowledgement']];
   function detailsView() {
     const privacy = safeUrl(config.privacyUrl || config.privacy_url || '');
-    return `<h2 class="quiz-q-title" tabindex="-1">මුලින්ම ඔබේ මූලික තොරතුරු ලබා දෙන්න.</h2>
-      <p class="flow-note">කෙටි ප්‍රශ්න හතරකින් ඔබ ඉගෙනගැනීමට කැමති දේ හඳුනාගනිමු. මෙහි හරි හෝ වැරදි පිළිතුරු නැත.</p>
-      <form id="flow-details" class="flow-form" novalidate>
-      <label class="flow-field" for="flow-name">සම්පූර්ණ නම<input class="quiz-text-input" id="flow-name" name="name" autocomplete="name" maxlength="120" value="${escape(state.details.name)}"${attrs('name')}>${errorFor('name')}</label>
-      <label class="flow-field" for="flow-phone">WhatsApp දුරකථන අංකය</label><div class="flow-phone-row"><label for="flow-dial">රටේ කේතය</label><select id="flow-dial" class="quiz-text-input" aria-label="රටේ දුරකථන කේතය">${[['+94','ශ්‍රී ලංකාව +94'],['+91','ඉන්දියාව +91'],['+971','එක්සත් අරාබි එමීර් +971'],['+974','කටාර් +974'],['+966','සවුදි අරාබිය +966'],['+965','කුවේට් +965'],['+968','ඕමාන් +968'],['+44','එක්සත් රාජධානිය +44'],['+61','ඕස්ට්‍රේලියාව +61'],['+1','ඇමෙරිකාව / කැනඩාව +1']].map(([v,l])=>`<option value="${v}"${state.details.dial===v?' selected':''}>${l}</option>`).join('')}</select><input class="quiz-text-input" id="flow-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="24" value="${escape(state.details.phone)}"${attrs('phone')}></div>${errorFor('phone')}<p class="flow-note">වෙනත් රටක අංකයක් නම් + සහ රටේ කේතය සමඟ සම්පූර්ණ අංකය ඇතුළත් කරන්න.</p>
-      <label class="flow-field" for="flow-email">විද්‍යුත් තැපැල් ලිපිනය — අත්‍යවශ්‍ය නොවේ<input class="quiz-text-input" id="flow-email" name="email" type="email" autocomplete="email" maxlength="254" value="${escape(state.details.email)}"${attrs('email')}>${errorFor('email')}</label>
-      <p class="flow-note">මෙම වැඩමුළුව කළමනාකරණය කිරීමට සහ ඔබේ ඉගෙනුම් අවශ්‍යතා හඳුනාගැනීමට ඔබේ තොරතුරු සහ පිළිතුරු භාවිත කරමු.</p>${resource('flow-privacy','පෞද්ගලිකත්ව නිවේදනය කියවන්න',privacy,true)}
-      ${check('workshop_contact_acknowledgement','මෙම වැඩමුළුවේ ලියාපදිංචිය කළමනාකරණය කිරීමට සහ ලියාපදිංචිය, සහභාගී වීම හා මතක් කිරීම් පිළිබඳ අදාළ පණිවිඩ යැවීමට මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි.',state.details.workshop_contact_acknowledgement)}
-      ${check('marketing_opt_in','ඉදිරියේදී Su Collection වෙතින් ඉගෙනුම් අවස්ථා සහ නිෂ්පාදන පිළිබඳ දැනුවත් කිරීම් ලබාගැනීමටත් මම කැමතියි. (අත්‍යවශ්‍ය නොවේ)',state.details.marketing_opt_in)}
-      <button class="quiz-ok-btn" type="submit">ප්‍රශ්න වෙත යන්න</button></form>`;
+    const dialOptions = [['+94','+94 ලංකාව'],['+91','+91 ඉන්දියාව'],['+971','+971 UAE'],['+974','+974 කටාර්'],['+966','+966 සවුදි'],['+965','+965 කුවේට්'],['+968','+968 ඕමාන්'],['+44','+44 UK'],['+61','+61 ඕස්ට්‍රේලියා'],['+1','+1 USA / කැනඩා']].map(([v,l])=>`<option value="${v}"${state.details.dial===v?' selected':''}>${l}</option>`).join('');
+    const steps = [
+      `<p class="flow-kicker">මුලින්ම ඔබේ මූලික තොරතුරු ලබා දෙන්න.</p><h2 class="quiz-q-title" tabindex="-1"><label for="flow-name">සම්පූර්ණ නම</label></h2>
+      <span class="pill-field">${pillIcon('name')}<input class="quiz-text-input" id="flow-name" name="name" autocomplete="name" maxlength="120" placeholder="උදා: නදීශා විජේරත්න" value="${escape(state.details.name)}"${attrs('name')}></span>${errorFor('name')}`,
+      `<h2 class="quiz-q-title" tabindex="-1"><label for="flow-phone">WhatsApp දුරකථන අංකය</label></h2>
+      <p class="flow-note">ඔබ WhatsApp භාවිත කරන දුරකථන අංකය ඇතුළත් කරන්න.</p>
+      <span class="pill-field">${pillIcon('phone')}<select id="flow-dial" class="pill-select" aria-label="රටේ දුරකථන කේතය">${dialOptions}</select><input class="quiz-text-input" id="flow-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="24" placeholder="77 123 4567" value="${escape(state.details.phone)}"${attrs('phone')}></span>${errorFor('phone')}`,
+      `<h2 class="quiz-q-title" tabindex="-1"><label for="flow-email">විද්‍යුත් තැපැල් ලිපිනය — අත්‍යවශ්‍ය නොවේ</label></h2>
+      <span class="pill-field">${pillIcon('email')}<input class="quiz-text-input" id="flow-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="name@example.com" value="${escape(state.details.email)}"${attrs('email')}></span>${errorFor('email')}`,
+      `${check('workshop_contact_acknowledgement','මෙම වැඩමුළුව සඳහා මගේ ලියාපදිංචිය කළමනාකරණය කිරීමට සහ ලියාපදිංචිය, සහභාගී වීම හා මතක් කිරීම් පිළිබඳ අදාළ පණිවිඩ යැවීමට මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි. පෞද්ගලිකත්ව නිවේදනය කියවා ඇත.',state.details.workshop_contact_acknowledgement)}
+      ${check('marketing_opt_in','ඉදිරියේදී Su Collection වෙතින් ඉගෙනුම් අවස්ථා සහ නිෂ්පාදන පිළිබඳ දැනුවත් කිරීම් ලබාගැනීමටත් මම කැමතියි.',state.details.marketing_opt_in)}
+      <p class="flow-fineprint">මෙම වැඩමුළුව කළමනාකරණය කිරීමට සහ ඔබේ ඉගෙනුම් අවශ්‍යතා හඳුනාගැනීමට ඔබේ තොරතුරු සහ පිළිතුරු භාවිත කරමු. තොරතුරු වෙත ප්‍රවේශය, ඒවා රඳවාගැනීම සහ සම්බන්ධ විය යුතු ආකාරය පෞද්ගලිකත්ව නිවේදනයේ දැක්වේ.${help() ? ` අමතර දැනුවත් කිරීම් නතර කිරීමට <a href="${escape(help())}" target="_blank" rel="noopener">උපකාරක සම්බන්ධතාවය</a> අමතන්න.` : ''}</p>${resource('flow-privacy','පෞද්ගලිකත්ව නිවේදනය කියවන්න',privacy,true)}`
+    ];
+    return `<form id="flow-details" class="flow-form" novalidate>${steps[state.detailStep]}</form>`;
   }
   function questionView() {
     const q = questions[state.step];
-    return `<h2 class="quiz-q-title" tabindex="-1">${q.title}</h2><p class="flow-note">එක පිළිතුරක් තෝරා ඉදිරියට යන්න.</p><div class="quiz-choices" role="group" aria-label="${q.title}">${Object.entries(q.choices).map(([code,label])=>`<button class="quiz-choice${state.answers[q.id]===code?' selected':''}" type="button" data-answer="${code}" aria-pressed="${state.answers[q.id]===code}"><span class="quiz-choice-label"><span class="sin">${label}</span></span></button>`).join('')}</div><div class="flow-actions">${action('flow-back','ආපසු',true)}${action('flow-next',state.step===3?'මගේ නොමිලේ ලියාපදිංචිය සම්පූර්ණ කරන්න':'ඉදිරියට')}</div>`;
+    return `${state.step===0 && state.saved ? '<p class="flow-saved">✓ ඔබේ මූලික තොරතුරු සුරැකී ඇත. ලියාපදිංචිය සම්පූර්ණ කිරීමට ඊළඟ කෙටි ප්‍රශ්න හතරට පිළිතුරු දෙන්න.</p>' : ''}${state.step===0 ? '<p class="flow-kicker">ඔබ ඉගෙනගැනීමට කැමති දේ අපට හඳුනාගැනීමට උදව් කරන්න. මෙහි හරි හෝ වැරදි පිළිතුරු නැත. අද ඔබට වඩාත් ගැලපෙන පිළිතුර තෝරන්න.</p>' : ''}<h2 class="quiz-q-title" tabindex="-1">${q.title}</h2><div class="quiz-choices" role="group" aria-label="${q.title}">${Object.entries(q.choices).map(([code,label],i)=>`<button class="quiz-choice${state.answers[q.id]===code?' selected':''}" type="button" data-answer="${code}" aria-pressed="${state.answers[q.id]===code}">${choiceKey(i)}<span class="quiz-choice-label"><span class="sin">${label}</span></span></button>`).join('')}</div>`;
   }
   function customView() {
-    return `<h2 class="quiz-q-title" tabindex="-1">මෙම වැඩමුළුවේ අවධානය මැහුම් ව්‍යාපාරයක මූලික කරුණු පිළිබඳවයි. ඔබ වැඩමුළුවටත් සහභාගී වීමට කැමතිද?</h2><div class="quiz-choices"><button class="quiz-choice" id="flow-attend">ඔව්, වැඩමුළු ලියාපදිංචිය ඉදිරියට ගෙන යන්න.</button><button class="quiz-choice" id="flow-enquiry-only">මට අවශ්‍ය මැහුම් සේවාවක් හෝ නිෂ්පාදනයක් ගැන විමසීමට පමණයි.</button></div>${action('flow-back','ආපසු',true)}`;
+    return `<h2 class="quiz-q-title" tabindex="-1">මෙම වැඩමුළුවේ අවධානය මැහුම් ව්‍යාපාරයක මූලික කරුණු පිළිබඳවයි. ඔබ වැඩමුළුවටත් සහභාගී වීමට කැමතිද?</h2><div class="quiz-choices"><button class="quiz-choice" type="button" id="flow-attend">${choiceKey(0)}<span class="quiz-choice-label">ඔව්, වැඩමුළු ලියාපදිංචිය ඉදිරියට ගෙන යන්න.</span></button><button class="quiz-choice" type="button" id="flow-enquiry-only">${choiceKey(1)}<span class="quiz-choice-label">මට අවශ්‍ය මැහුම් සේවාවක් හෝ නිෂ්පාදනයක් ගැන විමසීමට පමණයි.</span></button></div>`;
   }
   function enquiryView() {
-    return `<h2 class="quiz-q-title" tabindex="-1">ඔබ විමසීමට කැමති දේ කෙටියෙන් සඳහන් කරන්න.</h2><p class="flow-note">මෙය වැඩමුළු ලියාපදිංචියෙන් වෙනම විමසීමකි.</p><label for="flow-enquiry">ඔබේ විමසීම</label><textarea id="flow-enquiry" class="quiz-text-input" rows="4" maxlength="2000">${escape(state.enquiry_text)}</textarea>${check('enquiry_consent','මෙම විමසීමට පිළිතුරු ලබාදීම සඳහා මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි.',state.enquiry_consent)}<div class="flow-actions">${action('flow-back','ආපසු',true)}${action('flow-send-enquiry','මගේ විමසීම යවන්න')}</div>`;
+    return `<h2 class="quiz-q-title" id="flow-enquiry-title" tabindex="-1">ඔබ විමසීමට කැමති දේ කෙටියෙන් සඳහන් කරන්න.</h2><textarea id="flow-enquiry" aria-labelledby="flow-enquiry-title" class="quiz-text-input" rows="4" maxlength="2000">${escape(state.enquiry_text)}</textarea>${check('enquiry_consent','මෙම විමසීමට පිළිතුරු ලබාදීම සඳහා මගේ තොරතුරු භාවිත කිරීමට මම එකඟ වෙමි.',state.enquiry_consent)}`;
+  }
+  // Back / Continue live in the dark navigation card (sticky bar on mobile).
+  function actionsView() {
+    const back = action('flow-back','ආපසු',true);
+    switch (state.screen) {
+      case 'details': return (state.detailStep > 0 ? back : '') + `<button class="quiz-ok-btn" type="submit" form="flow-details">${state.detailStep === 3 ? 'ප්‍රශ්න වෙත යන්න' : 'ඉදිරියට'}</button>`;
+      case 'question': return back + action('flow-next', state.step===3 ? 'මගේ නොමිලේ ලියාපදිංචිය සම්පූර්ණ කරන්න' : 'ඉදිරියට');
+      case 'custom': return back;
+      case 'enquiry': return back + action('flow-send-enquiry','මගේ විමසීම යවන්න');
+      default: return '';
+    }
   }
   function resultView() {
     const id = state.video, asset = config.videos?.[id] || {};
     const src = safeUrl(asset.src || '');
     const captions = safeUrl(asset.captions || '');
-    const focus = state.answers.Q3 === 'NOT_SURE' ? 'ප්‍රයෝජනවත් ආරම්භක තැනක් සොයාගැනීම.' : questions[2].choices[state.answers.Q3];
+    // PDF gives the NOT_SURE focus only in English ("finding a useful starting point").
+    const focus = (state.answers.Q3 === 'NOT_SURE' ? 'ප්‍රයෝජනවත් ආරම්භක තැනක් සොයාගැනීම' : questions[2].choices[state.answers.Q3]).replace(/\.$/, '');
     const transcript = asset.transcript || transcripts[id];
-    const body = timeConfirmed() ? transcript.replace(/WhatsApp ප්‍රජාවට එක්වී[^.]*ඡන්දය දෙන්න\./g, 'අවසන් විස්තර සහ සම්බන්ධ වන උපදෙස් සඳහා WhatsApp ප්‍රජාවට එක්වන්න.') : transcript;
-    return `<h2 class="quiz-q-title" tabindex="-1">${preview ? 'පෙරදසුන් ලියාපදිංචිය සම්පූර්ණයි.' : 'නොමිලේ වැඩමුළුව සඳහා ඔබේ ලියාපදිංචිය සම්පූර්ණයි.'}</h2><p class="flow-date">${escape(dateText())}<br>${escape(timeText())}</p>
-      <section class="flow-result-section"><h3>වැඩමුළු ප්‍රජාවට එක්වන්න</h3><p>ලියාපදිංචිය සම්පූර්ණයි. WhatsApp ප්‍රජාවට එක්වීම වෙනම පියවරකි. එයට එක්වීමට පෙර වීඩියෝව නැරඹීම අනිවාර්ය නැත.</p>${resource('flow-community',timeConfirmed()?'WhatsApp ප්‍රජාවට එක්වන්න':'WhatsApp ප්‍රජාවට එක්වී පහසු වේලාවට ඡන්දය දෙන්න',community())}</section>
-      <section class="flow-result-section"><h3>ඔබ තෝරාගත් අවධානය</h3><p>${escape(focus)}</p><p class="flow-note">වැඩමුළුවේ සඳහන් මාතෘකා පහ සාකච්ඡා කෙරේ. ඔබේ පිළිතුර ඔබේ අවශ්‍යතා හඳුනාගැනීමට උපකාරී වේ. මෙය පුද්ගලික හෝ ඔබ වෙනුවෙන් පමණක් සකස් කළ පාඩමක් නොවේ.</p>${src ? `<video class="flow-video" id="flow-video" controls playsinline preload="none"${safeUrl(asset.poster)?` poster="${escape(safeUrl(asset.poster))}"`:''}><source src="${escape(src)}">${captions?`<track kind="captions" src="${escape(captions)}" srclang="si" label="සිංහල" default>`:''}</video><p id="flow-video-error" class="flow-note" hidden>වීඩියෝව පූරණය කළ නොහැකි විය. පහත පෙළ කියවන්න හෝ WhatsApp බොත්තම භාවිත කරන්න.</p>` : `<button class="flow-video-placeholder" id="flow-video-placeholder" type="button" data-resource="flow-video-placeholder" aria-label="වීඩියෝව පසුව එක් කෙරේ"><span class="flow-video-play" aria-hidden="true">▶</span><span class="flow-video-label">${routeLabels[id]}</span><span>වීඩියෝව පසුව එක් කෙරේ</span></button><span class="flow-resource-status" id="flow-video-placeholder-status" role="status"></span>`}<details id="flow-transcript" open><summary>පණිවිඩය කියවන්න</summary><p>${escape(body)}</p></details></section>
-      <section class="flow-result-section"><h3>ප්‍රජාවට එක්වීම</h3><p class="flow-note">බොත්තම එබීමෙන් පමණක් සාමාජිකත්වය තහවුරු නොවේ. පහත ප්‍රකාශය ඔබ විසින් ලබාදෙන තොරතුරක් ලෙස පමණක් සුරැකේ.</p>${action('flow-membership',state.membership==='self_reported'?'මගේ ප්‍රකාශය සුරැකී ඇත':'මම දැනටමත් ප්‍රජාවේ සිටිමි',true)}${resource('flow-help','ප්‍රජාවට එක්වීමට මට උදව් අවශ්‍යයි',help(),true)}<p class="flow-note">${timeConfirmed()?'සජීවී සහභාගීත්වය පිළිබඳ වැඩි විස්තර ප්‍රජාවේ දැනුම් දෙනු ලැබේ.':'සජීවීව සහභාගී වීමේ කැමැත්ත වේලාව තහවුරු කළ පසු විමසනු ලැබේ.'}</p></section>
-      <section class="flow-result-section"><h3>ඔබට අමතර තොරතුරු අවශ්‍යද?</h3><p class="flow-note">මෙය අත්‍යවශ්‍ය නොවන අතර වැඩමුළුවට සහභාගී වීමට බලපාන්නේ නැත. ඔබ කලින් තෝරාගත් ඉගෙනුම් කැමැත්තෙන් මෙම ඉල්ලීම් ස්වයංක්‍රීයව සක්‍රිය නොවේ.</p>${check('ebook','කරුණාකර ඊ-පොතේ අන්තර්ගතය සහ මිලදී ගැනීමේ තොරතුරු මට එවන්න.',state.requests.includes('ebook'))}${check('mentorship','පුද්ගලික ව්‍යාපාර මඟපෙන්වීමේ වැඩසටහන පිළිබඳ තොරතුරු ලබාදීමට කරුණාකර මා අමතන්න.',state.requests.includes('mentorship'))}${check('none','දැනට නිෂ්පාදන පිළිබඳ තොරතුරු අවශ්‍ය නැහැ.',state.requests.includes('none'))}${action('flow-preferences','මගේ කැමැත්ත සුරකින්න')}<p class="flow-note">මෙය කිසිවක් මිලදී ගැනීමක් හෝ ගාස්තු අය කරන වැඩසටහනකට ඇතුළත් වීමක් නොවේ.</p><p id="flow-pref-status" role="status"></p></section>`;
+    const body = timeConfirmed() ? transcript.replace(/WhatsApp ප්‍රජාවට එක්වී[^.]*ඡන්දය දෙන්න\./g, 'වැඩමුළුවේ වේලාව දැන් තහවුරු කර ඇත. අවසන් විස්තර සහ වැඩමුළුවට සම්බන්ධ වන සබැඳිය ලබාගැනීමට අපේ WhatsApp ප්‍රජාවට එක්වන්න.') : transcript;
+    return `<h2 class="quiz-q-title" tabindex="-1">නොමිලේ වැඩමුළුව සඳහා ඔබේ ලියාපදිංචිය සම්පූර්ණයි.</h2><p class="flow-date">${escape(dateText())}<br>${escape(timeText())}</p>
+      <section class="flow-result-section">${resource('flow-community',timeConfirmed()?'WhatsApp ප්‍රජාවට එක්වන්න':'WhatsApp ප්‍රජාවට එක්වී පහසු වේලාවට ඡන්දය දෙන්න',community())}<p>ලියාපදිංචිය සම්පූර්ණයි. WhatsApp ප්‍රජාවට එක්වීම වෙනම පියවරකි. එයට එක්වීමට පෙර වීඩියෝව නැරඹීම අනිවාර්ය නැත.</p><p class="flow-note">දැනටමත් ප්‍රජාවේ සිටිනවාද? එය විවෘත කර ඉහළින් රඳවා ඇති වේලාව පිළිබඳ ඡන්ද විමසීම බලන්න.</p>${resource('flow-help','ප්‍රජාවට එක්වීමට මට උදව් අවශ්‍යයි',help(),true)}</section>
+      <section class="flow-result-section"><p>ඔබ තෝරාගත් අවධානය: ${escape(focus)}. වැඩමුළුවේ සඳහන් මාතෘකා පහ සාකච්ඡා කෙරේ. ඔබේ පිළිතුර ඔබේ අවශ්‍යතා හඳුනාගැනීමට අපට උපකාරී වේ.</p><p class="flow-note">ඔබේ තත්ත්වයට අදාළ මෙම කෙටි වීඩියෝව නරඹන්න. නැතිනම් පහත පෙළ කියවන්න.</p>${src ? `<video class="flow-video" id="flow-video" controls playsinline preload="none"${safeUrl(asset.poster)?` poster="${escape(safeUrl(asset.poster))}"`:''}><source src="${escape(src)}">${captions?`<track kind="captions" src="${escape(captions)}" srclang="si" label="සිංහල" default>`:''}</video><p id="flow-video-error" class="flow-note" hidden>වීඩියෝව පූරණය කළ නොහැකි විය. පෙළ කියවන්න හෝ පහත WhatsApp බොත්තම භාවිත කරන්න.</p>` : `<button class="flow-video-placeholder" id="flow-video-placeholder" type="button" data-resource="flow-video-placeholder" aria-label="වීඩියෝව පසුව එක් කෙරේ"><span class="flow-video-play" aria-hidden="true">▶</span><span>වීඩියෝව පසුව එක් කෙරේ</span></button><span class="flow-resource-status" id="flow-video-placeholder-status" role="status"></span>`}<details id="flow-transcript" open><summary>පණිවිඩය කියවන්න</summary><p>${escape(body)}</p></details></section>
+      <section class="flow-result-section"><h3>ඔබට අමතර තොරතුරු අවශ්‍යද?</h3><p class="flow-note">මෙය අත්‍යවශ්‍ය නොවන අතර වැඩමුළුවට සහභාගී වීමට බලපාන්නේ නැත.</p>${check('ebook','කරුණාකර ඊ-පොතේ අන්තර්ගතය සහ මිලදී ගැනීමේ තොරතුරු මට එවන්න.',state.requests.includes('ebook'))}${check('mentorship','පුද්ගලික ව්‍යාපාර මඟපෙන්වීමේ වැඩසටහන පිළිබඳ තොරතුරු ලබාදීමට කරුණාකර මා අමතන්න.',state.requests.includes('mentorship'))}${check('none','දැනට නිෂ්පාදන පිළිබඳ තොරතුරු අවශ්‍ය නැහැ.',state.requests.includes('none'))}${action('flow-preferences','මගේ කැමැත්ත සුරකින්න')}<p class="flow-note">මෙය කිසිවක් මිලදී ගැනීමක් හෝ ගාස්තු අය කරන වැඩසටහනකට ඇතුළත් වීමක් නොවේ.</p><p id="flow-pref-status" role="status"></p></section>`;
   }
   function render() {
     const container = $('quiz-content-area'); if (!container) return;
-    $('quiz-intro-text').style.display = 'none';
-    $('quiz-nav').style.display = 'none';
     const result = state.screen === 'result';
-    const labels = { details: 'ඔබේ තොරතුරු', custom: 'වැඩමුළුවට සහභාගී වීම', enquiry: 'ඔබේ විමසීම', enquiry_done: 'විමසීම ලැබී ඇත', result: 'ලියාපදිංචිය සම්පූර්ණයි' };
+    const labels = { details: 'ඔබේ තොරතුරු', custom: 'ප්‍රශ්න 4න් 1', result: 'ලියාපදිංචිය සම්පූර්ණයි' };
+    const total = 8, index = state.screen === 'details' ? state.detailStep : state.screen === 'question' ? 4 + state.step : null;
     $('quiz-phase-label').textContent = state.screen === 'question' ? `ප්‍රශ්න 4න් ${state.step + 1}` : labels[state.screen] || '';
-    $('quiz-progress-fill').style.width = result ? '100%' : state.screen === 'question' ? `${state.step * 25}%` : '0%';
+    $('quiz-progress-fill').style.width = `${(result || state.screen === 'enquiry_done' ? 1 : index === null ? 5 / total : (index + 1) / total) * 100}%`;
     let view;
     switch (state.screen) {
       case 'question': view = questionView(); break;
       case 'custom': view = customView(); break;
       case 'enquiry': view = enquiryView(); break;
-      case 'enquiry_done': view = `<h2 class="quiz-q-title" tabindex="-1">${preview?'පෙරදසුන් විමසීම සුරැකී ඇත.':'ඔබේ විමසීම ලැබී ඇත.'}</h2><p>ඔබ ලබාදුන් සම්බන්ධතා තොරතුරු හරහා කණ්ඩායම පිළිතුරු ලබාදෙනු ඇත. මෙය තහවුරු කළ ඇණවුමක් හෝ වැඩමුළු ලියාපදිංචියක් නොවේ.</p>`; break;
+      case 'enquiry_done': view = `<h2 class="quiz-q-title" tabindex="-1">ඔබේ විමසීම ලැබී ඇත.</h2><p>ඔබ ලබාදුන් සම්බන්ධතා තොරතුරු හරහා කණ්ඩායම පිළිතුරු ලබාදෙනු ඇත. මෙය තහවුරු කළ ඇණවුමක් හෝ වැඩමුළු ලියාපදිංචියක් නොවේ.</p>`; break;
       case 'result': view = resultView(); break;
       default: view = detailsView();
     }
-    container.innerHTML = `<div class="quiz-question${result?' quiz-result':''}">${preview?'<p class="flow-banner" role="note">පෙරදසුන පමණයි — දත්ත මෙම පිටුව තුළ පමණක් අනුකරණය කෙරේ. සැබෑ ලියාපදිංචියක් හෝ විමසීමක් යවා නැත.</p>':''}${view}<div class="flow-errors" id="flow-errors" role="alert" tabindex="-1">${escape(state.error)}</div><div class="flow-status" id="flow-status" role="status" aria-live="polite"></div></div>`;
+    container.innerHTML = `<div class="quiz-question${result?' quiz-result':''}">${view}<div class="flow-errors" id="flow-errors" role="alert" tabindex="-1">${escape(state.error)}</div><div class="flow-status" id="flow-status" role="status" aria-live="polite"></div></div>`;
+    $('quiz-nav').innerHTML = actionsView();
     const nextKey = `${state.screen}:${state.step}`;
     if (nextKey !== renderedKey) { $('quiz-main-panel').scrollTop = 0; renderedKey = nextKey; }
     bind(); setPending(state.pending);
     if (state.error) $('flow-errors').focus?.();
-    else container.querySelector('.quiz-q-title')?.focus({ preventScroll: true });
+    else (state.screen === 'details' && container.querySelector('.pill-field input, .flow-check input') || container.querySelector('.quiz-q-title'))?.focus({ preventScroll: true });
   }
   function bind() {
     const on = (id, eventName, fn) => $(id)?.addEventListener(eventName, fn);
-    on('flow-details','input',captureDetails); on('flow-details','change',captureDetails);
-    on('flow-details','submit', e => { e.preventDefault(); captureDetails(); if (!validateDetails()) { render(); $('quiz-content-area').querySelector('[aria-invalid="true"]')?.focus(); return; } save(async()=>{
+    const clearError = e => { const key = e.target.id?.replace('flow-',''); captureDetails(); if (!state.errors[key]) return; delete state.errors[key]; $(`error-${key}`)?.remove(); e.target.removeAttribute('aria-invalid'); e.target.removeAttribute('aria-describedby'); };
+    on('flow-details','input',clearError); on('flow-details','change',clearError);
+    on('flow-details','submit', e => { e.preventDefault(); captureDetails();
+      const invalid = () => { render(); $('quiz-content-area').querySelector('[aria-invalid="true"]')?.focus(); };
+      validateDetails(); state.errors = Object.fromEntries(Object.entries(state.errors).filter(([key]) => detailKeys[state.detailStep].includes(key)));
+      if (Object.keys(state.errors).length) return invalid();
+      if (state.detailStep < 3) { state.detailStep++; render(); return; }
+      if (!validateDetails()) { state.detailStep = detailKeys.findIndex(keys => keys.some(key => state.errors[key])); return invalid(); }
+      save(async()=>{
       const source = new URLSearchParams(location.search).get('source');
       const allow = config.sourceCodes || config.approvedSourceCodes || ['direct'];
       const details = { name: state.details.name.trim(), phone: normalPhone(), email: state.details.email.trim(), workshop_contact_acknowledgement: true, marketing_opt_in: state.details.marketing_opt_in, source_code: allow.includes(source)?source:'direct', test_flag: preview || config.testFlag === true };
@@ -220,11 +251,12 @@
       });
     });
     on('flow-back','click',()=>{
-      if (state.pending) return; state.error='';
+      if (state.pending) return; state.error=''; state.errors={};
+      if (state.screen==='details') { state.detailStep=Math.max(0,state.detailStep-1); render(); return; }
       if (state.screen==='enquiry') state.screen='custom';
       else if (state.screen==='custom') { state.screen='question'; state.step=0; }
       else if (state.step>0) { state.step--; if(state.step===0 && state.answers.Q1==='CUSTOM') state.screen='custom'; }
-      else state.screen='details'; render();
+      else { state.screen='details'; state.detailStep=3; } render();
     });
     on('flow-attend','click',()=>save(async()=>{ state.custom_attending=true; await request('answer',{answers:{...state.answers},custom_attending:true}); state.screen='question'; state.step=1; }));
     on('flow-enquiry-only','click',()=>{ state.custom_attending=false; state.screen='enquiry'; render(); });
@@ -242,7 +274,6 @@
     });
     on('flow-preferences','click',()=>save(async()=>{ if(!state.requests.length) state.requests=['none']; await request('preferences',{requests:[...state.requests],explicit_product_request:[...state.requests]}); state.preferenceSaved=true; }));
     if(state.preferenceSaved && $('flow-pref-status')) $('flow-pref-status').textContent='ඔබේ කැමැත්ත සුරැකී ඇත.';
-    on('flow-membership','click',()=>save(async()=>{ await request('membership',{membership_state:'self_reported'}); state.membership='self_reported'; }));
     on('flow-community','click',()=>{
       if (!community()) return;
       // The invitation opens immediately; logging cannot block workshop access.
@@ -282,8 +313,11 @@
     const month=new Intl.DateTimeFormat('si-LK',{month:'long',timeZone:'Asia/Colombo'}).format(date);
     for(const prefix of ['home','modal']) { if($(`${prefix}-event-month`)) $(`${prefix}-event-month`).textContent=month; if($(`${prefix}-event-day`)) $(`${prefix}-event-day`).textContent=String(date.getUTCDate()); if($(`${prefix}-event-time`)) $(`${prefix}-event-time`).textContent=timeText(); }
     const days=['ඉරිදා','සඳුදා','අඟහරුවාදා','බදාදා','බ්‍රහස්පතින්දා','සිකුරාදා','සෙනසුරාදා'], short=['ඉරි','සඳු','අඟ','බදා','බ්‍රහ','සිකු','සෙන'];
-    if($('home-event-year')) $('home-event-year').textContent=String(date.getUTCFullYear());
-    if($('home-event-weekday')) $('home-event-weekday').textContent=days[date.getUTCDay()];
+    const shortMonth=new Intl.DateTimeFormat('en-GB',{month:'short',timeZone:'Asia/Colombo'}).format(date);
+    for(const prefix of ['home','modal']) { if($(`${prefix}-event-year`)) $(`${prefix}-event-year`).textContent=String(date.getUTCFullYear()); if($(`${prefix}-event-weekday`)) $(`${prefix}-event-weekday`).textContent=days[date.getUTCDay()]; }
+    if($('modal-event-month-short')) $('modal-event-month-short').textContent=shortMonth;
+    if($('home-event-time') && !timeConfirmed()) $('home-event-time').textContent=`${timeText()} ඔබට පහසු වේලාව සඳහා ඡන්දය දීමට ලියාපදිංචි වී ප්‍රජාවට එක්වන්න.`;
+    if($('quiz-date-line')) $('quiz-date-line').textContent=`${dateText()} · ${days[date.getUTCDay()]}`;
     const week=document.querySelector('.date-week'), monday=new Date(date); monday.setUTCDate(date.getUTCDate()-(date.getUTCDay()+6)%7);
     if(week) week.innerHTML=Array.from({length:7},(_,i)=>{ const d=new Date(monday); d.setUTCDate(monday.getUTCDate()+i); return `<li${i===(date.getUTCDay()+6)%7?' class="is-event"':''}><span>${short[d.getUTCDay()]}</span>${d.getUTCDate()}</li>`; }).join('');
   }
